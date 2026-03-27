@@ -1,0 +1,10 @@
+# 第一步：激活虚拟环境
+.venv\Scripts\activate
+
+# 第二步：安装 requests
+pip install requests
+```
+
+激活成功后，终端提示符前面会出现 `(.venv)` 字样，像这样：
+```
+(.venv) PS C:\Users\Colorful\Desktop\MyCode\python\basics>

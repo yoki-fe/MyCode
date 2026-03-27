@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝桥杯算法可视化学习平台</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>🏆 蓝桥杯 C++ 算法可视化学习平台</h1>
+        </div>
+    </nav>
+    
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>📚 学习路线</h3>
+            
+            <div class="category-title">🌱 入门篇</div>
+            <ul class="algo-list">
+                <li class="algo-item active" data-algo="utils"><span>工具函数模版</span><span class="difficulty diff-easy">入门</span></li>
+                <li class="algo-item" data-algo="prefix-diff"><span>差分与前缀和</span><span class="difficulty diff-easy">入门</span></li>
+                <li class="algo-item" data-algo="enum-twopointers"><span>枚举与尺取法</span><span class="difficulty diff-easy">入门</span></li>
+            </ul>
+
+            <div class="category-title">🌿 进阶篇</div>
+            <ul class="algo-list">
+                <li class="algo-item" data-algo="binary-search"><span>二分算法</span><span class="difficulty diff-medium">进阶</span></li>
+                <li class="algo-item" data-algo="search"><span>搜索算法 (DFS/BFS)</span><span class="difficulty diff-medium">进阶</span></li>
+                <li class="algo-item" data-algo="greedy"><span>贪心算法</span><span class="difficulty diff-medium">进阶</span></li>
+                <li class="algo-item" data-algo="union-find"><span>并查集</span><span class="difficulty diff-medium">进阶</span></li>
+            </ul>
+
+            <div class="category-title">🌳 拔高篇 (重难点)</div>
+            <ul class="algo-list">
+                <li class="algo-item" data-algo="dp"><span>动态规划 (DP)</span><span class="difficulty diff-hard">困难</span></li>
+                <li class="algo-item" data-algo="graph"><span>图论入门</span><span class="difficulty diff-hard">困难</span></li>
+                <li class="algo-item" data-algo="math"><span>简单数论</span><span class="difficulty diff-hard">困难</span></li>
+                <li class="algo-item" data-algo="combinatorics"><span>组合数学</span><span class="difficulty diff-hard">困难</span></li>
+            </ul>
+        </aside>
+        
+        <main class="content" id="main-content"></main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
