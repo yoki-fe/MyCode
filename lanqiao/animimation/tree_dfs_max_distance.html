@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DFS树遍历动画</title>
+    <style>
+        body { margin: 20px; font-family: Arial; }
+        canvas { border: 1px solid #ccc; display: block; margin: 20px auto; }
+        .controls { text-align: center; margin: 20px; }
+        button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+        .info { text-align: center; font-size: 18px; margin: 10px; }
+        .stack { max-width: 600px; margin: 20px auto; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <div>当前节点: <span id="current">-</span></div>
+        <div>当前距离: <span id="dist">0</span></div>
+        <div>最远节点: <span id="farthest">-</span> | 最大距离: <span id="maxDist">0</span></div>
+    </div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div class="controls">
+        <button onclick="start()">开始</button>
+        <button onclick="step()">单步执行</button>
+        <button onclick="reset()">重置</button>
+    </div>
+    <div class="stack">调用栈: <span id="stack"></span></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 示例树结构
+        const tree = {
+            nodes: [1, 2, 3, 4, 5],
+            edges: [
+                {p: 1, q: 2, d: 3},
+                {p: 1, q: 3, d: 5},
+                {p: 2, q: 4, d: 2},
+                {p: 2, q: 5, d: 4}
+            ]
+        };
+        
+        const g = {};
+        tree.nodes.forEach(n => g[n] = []);
+        tree.edges.forEach(e => {
+            g[e.p].push({v: e.q, w: e.d});
+            g[e.q].push({v: e.p, w: e.d});
+        });
+        
+        const pos = {1: {x:400,y:100}, 2: {x:250,y:250}, 3: {x:550,y:250}, 4: {x:150,y:400}, 5: {x:350,y:400}};
+        
+        let steps = [];
+        let currentStep = 0;
+        let maxDist = 0, farthest = -1;
+        
+        function generateSteps(start) {
+            const s = [];
+            maxDist = 0;
+            farthest = -1;
+            
+            function dfs(u, parent, dist, stack) {
+                s.push({type: 'enter', u, parent, dist, stack: [...stack, u], maxDist, farthest});
+                
+                if (dist > maxDist) {
+                    maxDist = dist;
+                    farthest = u;
+                    s.push({type: 'update', u, parent, dist, stack: [...stack, u], maxDist, farthest});
+                }
+                
+                for (let {v, w} of g[u]) {
+                    if (v !== parent) {
+                        dfs(v, u, dist + w, [...stack, u]);
+                    }
+                }
+                
+                s.push({type: 'exit', u, parent, dist, stack: [...stack, u], maxDist, farthest});
+            }
+            
+            dfs(start, -1, 0, []);
+            return s;
+        }
+        
+        function draw(step) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 画边
+            tree.edges.forEach(e => {
+                ctx.strokeStyle = '#ccc';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pos[e.p].x, pos[e.p].y);
+                ctx.lineTo(pos[e.q].x, pos[e.q].y);
+                ctx.stroke();
+                
+                const mx = (pos[e.p].x + pos[e.q].x) / 2;
+                const my = (pos[e.p].y + pos[e.q].y) / 2;
+                ctx.fillStyle = '#666';
+                ctx.fillText(e.d, mx, my);
+            });
+            
+            // 画节点
+            tree.nodes.forEach(n => {
+                ctx.beginPath();
+                ctx.arc(pos[n].x, pos[n].y, 25, 0, Math.PI * 2);
+                
+                if (step && step.u === n) {
+                    ctx.fillStyle = step.type === 'update' ? '#ff0' : '#0f0';
+                } else if (step && step.farthest === n) {
+                    ctx.fillStyle = '#f00';
+                } else {
+                    ctx.fillStyle = '#fff';
+                }
+                
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#000';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(n, pos[n].x, pos[n].y);
+            });
+            
+            if (step) {
+                document.getElementById('current').textContent = step.u;
+                document.getElementById('dist').textContent = step.dist;
+                document.getElementById('farthest').textContent = step.farthest;
+                document.getElementById('maxDist').textContent = step.maxDist;
+                document.getElementById('stack').textContent = step.stack.join(' → ');
+            }
+        }
+        
+        function start() {
+            steps = generateSteps(1);
+            currentStep = 0;
+            const timer = setInterval(() => {
+                if (currentStep < steps.length) {
+                    draw(steps[currentStep]);
+                    currentStep++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, 800);
+        }
+        
+        function step() {
+            if (steps.length === 0) steps = generateSteps(1);
+            if (currentStep < steps.length) {
+                draw(steps[currentStep]);
+                currentStep++;
+            }
+        }
+        
+        function reset() {
+            steps = [];
+            currentStep = 0;
+            maxDist = 0;
+            farthest = -1;
+            draw(null);
+            document.getElementById('current').textContent = '-';
+            document.getElementById('dist').textContent = '0';
+            document.getElementById('farthest').textContent = '-';
+            document.getElementById('maxDist').textContent = '0';
+            document.getElementById('stack').textContent = '';
+        }
+        
+        draw(null);
+    </script>
+</body>
+</html>
